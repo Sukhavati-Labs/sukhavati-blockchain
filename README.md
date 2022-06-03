@@ -218,12 +218,12 @@ curl -X POST 'http://{{wallet-url}}/v1/wallets/use' \
 
 ```
 
-## Create addresses
+## Get addresses
 
 - Request
 
 ```bash
-curl -X POST 'http://{{wallet-url}}/v1/addresses/create' \
+curl -X POST 'http://{{wallet-url}}/v1/addresses/version/0' \
 -H 'Content-Type: application/json' 
 ```
 
@@ -231,14 +231,19 @@ curl -X POST 'http://{{wallet-url}}/v1/addresses/create' \
 
 ```json5
 {
-  "address": "sk1qql0pplvqn8z84333hle39fh227hkdl22a0s9vf0td0lwy57dnvuqqrrtq4c",
-  "version": 0,
-  "used": false,
-  "stdAddress": "sk1qql0pplvqn8z84333hle39fh227hkdl22a0s9vf0td0lwy57dnvuqqrrtq4c",
-  "scriptAddress": "fbc21fb013388f58c637fe6254dd4af5ecdfa95d7c0ac4bd6d7fdc4a79b36700",
-  "redeemScript": null,
-  "publicKey": "03c6118fda58a20879bd92f42746a6c8945dfc883f92230fe8548aac4defb76a59",
-  "addressClass": 0
+    "details": [
+        {
+      "address": "sk1qql0pplvqn8z84333hle39fh227hkdl22a0s9vf0td0lwy57dnvuqqrrtq4c",
+      "version": 0,
+      "used": false,
+      "stdAddress": "sk1qql0pplvqn8z84333hle39fh227hkdl22a0s9vf0td0lwy57dnvuqqrrtq4c",
+      "scriptAddress": "fbc21fb013388f58c637fe6254dd4af5ecdfa95d7c0ac4bd6d7fdc4a79b36700",
+      "redeemScript": null,
+      "publicKey": "03c6118fda58a20879bd92f42746a6c8945dfc883f92230fe8548aac4defb76a59",
+      "addressClass": 0
+    }
+    ]    
+      
 }
 ```
 
@@ -250,8 +255,7 @@ curl -X POST 'http://{{wallet-url}}/v1/addresses/create' \
 curl -X POST 'http://{{farmer-url}}/v1/farmer/config' \
 -H 'Content-Type: application/json' \
 --data-raw '{
-    "payout_address":"sk1qql0pplvqn8z84333hle39fh227hkdl22a0s9vf0td0lwy57dnvuqqrrtq4c",
-    "passphrase":"12345678"
+    "payout_address":"sk1qql0pplvqn8z84333hle39fh227hkdl22a0s9vf0td0lwy57dnvuqqrrtq4c"
 }'
 ```
 
@@ -292,20 +296,46 @@ curl -X GET 'http://{{wallet-url}}/v1/blocks/best'
 
 ```json
 {
-  "height": "8792",
-  "target": "4f02aaa92a9",
-  "posProof": {
-    "challenge": "1c548032f3f8c669ddba0b9fd52854e390705f5132749844f3b4b0693ebafa45",
-    "proof": "b23af2ed86a805bcd52100f9f413707c1f42247c1619cd52aab55c8ad8913902f43312dd1fe138a05128469ed4720463070dbd381f3c8bc9cbe941fafa52987adf9ddeb0e9c15d9f013676dfa667f938888c827aed54f99cc462e90a341ea16998b288d8a93bdb31bf67e279459d9d4c75192597dee88e7ca640dc15cff06698fc2f3a4ce34c74f874860579b22e937c71a0cc88bd2d733dbffa7925b1f2a1714cc18db43abc46afa4646f3f315d89de54f022dd4ebb4754191dcdeed0c8ce3af49a207d398dd4191170ef332890d291da486f018724536416e6537126e703b23b2bef7d52f434e242d105081b5173b157fe74ab06c4520c12aa14ad02b697d2",
-    "proofQuality": "a42457f757be2c7db4c6d2500ac03d9b10ea051eed13f4ae77eacda477896ddd",
-    "plotSize": 32,
-    "plotPubKey": "aa3bdb537c4c02ec9a784b226423e8827af1e0803d8d399e1b09d46a353096a561c9f971e8898bdffee725c42d001b3e",
-    "quality": "c7a1c6859cd"
-  }
+    "hash": "e810a717ca6225825ad44d573438295993ee9901558d7010d74cfd6769ae93aa",
+    "chainId": "51ed824a7c6f1f5fe9deb4e74534032f732da9735aaef61281a4c75eb3b1e421",
+    "version": "1",
+    "height": "26884",
+    "timestamp": "1654269740",
+    "posSlot": "280537",
+    "previousHash": "01c1b99782c2d019b104b066d3807386dc4c1f1255b6fd6dffea61cf3e7fb433",
+    "transactionRoot": "4441ebcc90959aea1b8385826b889b0952a5fcd8d66e66cad46e0be5722e90aa",
+    "witnessRoot": "4441ebcc90959aea1b8385826b889b0952a5fcd8d66e66cad46e0be5722e90aa",
+    "proposalRoot": "9663440551fdcd6ada50b1fa1b0003d19bc7944955820b54ab569eb9a7ab7999",
+    "target": "fc54f3f9df5",
+    "posPubKey": {
+        "farmerPubKey": "b785108ae0cb2d4c34376d3ed93174a237d0d582a308f4778d5bbe95351703372dfaac2f155aefedac603f0ca88e11af",
+        "maskPubKey": "ab62d7b9ec5132a66eaa4667d26ca22c9b1ddea1fc8647a96237a8f6fe651b08c47a7734cd16d631dd4e01c3a1305d04",
+        "localPubKey": "94aad6c1748aad6d49006d6af087d39ffe1fbcf8a7a7ae32bb4bce38771b685a67fce1a8fbc087cffec56079905feb8d"
+    },
+    "posProof": {
+        "challenge": "17b8e8ee8a27c95154e0dc4a9b743a3385007617b9f04aaf3370136625c21172",
+        "proof": "2fd5a5f97f36cfd01be10c3645f8fd54b608bd9665c93f846730bac25893c24c20648a389f433ce2d0818404d838b8ce241dc1c1c42ee039d0d88609c700cf9eb19d223b542983ad66dd363600babca47ca17334e82d07dab86b7d2df1f8d6eeb0ec27ae115399ab5e7bf7e9989bc6ac7a33116c991a36953a4c0c7f1ac6e1782c056d3154d7e35e9cda5597f810194f83c2b445a9b55ecfa5d11ef825397ecd7aa2fedb8130f0852940a049a20c68543cc179afcb779f0d853e8c1575f24e070106fed0c08960fde9846400416b50f625cc80b87fbc90d623f8a2795c140b491a90523c5e6b06dd0bf8224dc7bd1d92474945b1e4db0e3af5019bf8a2caf3c0",
+        "proofQuality": "1589bff6f39aaa11fe55fe041f8bb35c28c18093961cfb4b531d06e102c35a7d",
+        "plotSize": 32,
+        "poolPubKey": "866c192e4130b94f69a2ebd0a5a2a9c47a49c362fe52cf63dd4dac1dca92c2aa723387a2bedb83791641e741a84a2ac8",
+        "plotPubKey": "9790eed2d9fe33a80e7ad0f7fb592195e9bc3d118285944ad324fd87b7b95b13ae94fa04a2e7b664f1c81b2fc4b0f9b5",
+        "quality": "23551549179770",
+        "plotId": "018bc73aeb2c6b3954f331de5056c5533bc96d57e06ad4785362b5b2b8526377"
+    },
+    "posSignature": "b7bef3d7240d218451f6f40d17a3765de96c7468a53aa5ba8758e39a954ad5e4d9c07e1895a3777988b2dd83d0ca2cf300621cec14de2b5a6ec190bc325dfd2c708f7fb53e45b78619542f0a20d6aed77672636af6e33d767cdbd647cfc5f5f2",
+    "potProof": {
+        "eL": "0300d0597ca601556e4e572192fc75a12e2998c80aaa04c2904d1e2dea80293c062c8956396da31670e266210243358774000201000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "proof": "03002910056f931420017c264c53d9cf41095dd88a47a5adf701a96956aad3fcfd16684a9b097b3dd9d71f255a5fbda633050201000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "iter": "5250000"
+    },
+    "banList": [],
+    "timeUtc": "2022-06-03T15:22:20Z",
+    "medianTimestamp": "1654269524"
 }
+
 ```
 
-## Get wallet current balance
+## Get wallet balance
 
 - Request
 
@@ -317,13 +347,26 @@ curl  -X POST 'http://{{wallet-url}}/v1/wallets/current/balance'
 
 ```json
 {
-    "walletId": "ac10an6q8j9fnk9x204xq9q8mc353ks6y5zgeu79d6",
-    "total": "64537.27084536",
+    "walletId": "ac10puqqnwzve8grf9fpa3dvh27pq3sgka8rt7csr2",
+    "total": "0",
     "detail": {
-        "spendable": "64537.27084536",
+        "total": "0",
+        "spendable": "0",
+        "pendingTotal": "0",
+        "pending": "0",
+        "pendingChange": "0",
+        "binding": "0",
+        "unbinding": "0",
+        "locking": "0",
+        "vesting": "0",
         "withdrawableLocking": "0",
-        "withdrawableBinding": "0"
-    }
+        "withdrawableUnbinding": "0",
+        "withdrawableLockingUtxo": 0,
+        "withdrawableUnbindingUtxo": 0
+    },
+    "walletSyncedHeight": "26884",
+    "knownBestHeight": "26884",
+    "synced": true
 }
 ```
 
