@@ -4,15 +4,16 @@
   </a>
 </p>
 
-# Testnet Phase 1
-> Sukhavati Network is currently in Testnet Phase 1. 
-> 
-> To participate in this early testnet, you need to download the fullnode program and related tools and checkout the following guide.
+# Join Testnet 3C
 
-## 1. Make fake plots
+> Notice: Testnet 3C is a fake plot testnet.
+> 
+> To participate in this testnet, download the latest client and follow the guide below.
+
+## 1. Make some fake plots
 
 ```
-Usage of ./plot:
+Usage of ./skt-fake-plot:
   -c int
     	fake k32 plot count (default 1)
   -m string
@@ -24,12 +25,15 @@ Usage of ./plot:
 example:
 
 ```bash
-./plot -c 10000 -p /home/skt/plots/
+$ ./skt-fake-plot -c 5000 -p /skt/plots-fake/
 ```
 
-A `keys.json` file will also be generated in the same directory.
+A file named `keys.json` will also be generated in the same directory. These are the Chia keys that used to create the fake plots. You will need to import the `master_sk` in `skt-farmer` when adding these plots to harvester.
 
-`keys.json`:
+```bash
+$ cat /skt/fake-plots/keys.json
+```
+
 ```json
 {
   "master_sk": "71de4cbc2ee7a77c043234da615ad900d33b871d56a5dd5a627e7d3b14fd6938",
@@ -42,90 +46,127 @@ A `keys.json` file will also be generated in the same directory.
  }
 ```
 
-## 2. Start harvester
-
-```bash
-Usage of ./harvester-cli:
-  -c string
-    	config file path
-  -l string
-    	listen address (default "127.0.0.1:8000")
-  -log string
-    	log path (default "/var/log/harvester")
-  -p value
-    	plot files dir path
-  -v string
-        loglevel value can be: panic, fatal, error, warn, info, debug, trace (default "debug")
-```
-
-example:
-
-```bash
-./harvester-cli -log ./logs -p /home/skt/plots/
-```
-
-## 3. Start miner
+## 2. Start skt-farmer
 
 ```bash
 Usage:
-  minerd [OPTIONS]
+  skt-farmer [OPTIONS]
 
 Application Options:
-  -C, --configfile= Path to configuration file (config.json)
-  -V, --version     Display Version information and exit
-  -P, --privpass=   Private passphrase for miner
-```
+  -c, --configfile= Path to configuration file (config.json)
+  -v, --version     Display Version information and exit
+      --autostart   Generate (mine) coins when start
+      --init        Init miner keystore
 
-example:
-
-```bash
-./minerd -C config.json -P 12345678
+Help Options:
+  -h, --help        Show this help message
 ```
 
 `config.json` example:
 
-```json
+```json5
 {
   "app": {
-    "pub_password": "123456"
+    "pub_password": "yourPubPassword",
+    "min_memory_block_tree_nodes": 8000
   },
   "network": {
     "p2p": {
-      "listen_address": "tcp://0.0.0.0:43458",
-      "skip_upnp": true
+      "seeds": "",
+      "add_peer": [],
+      "listen_address": "tcp://0.0.0.0:6180",
+      "skip_upnp": false
     },
     "rpc": {
       "miner_grpc_port": "9687",
-      "miner_http_port": "9688",
-      "wallet_grpc_port": "8587",
+      "miner_http_port": "9888",
+      "wallet_grpc_port": "8687",
       "wallet_http_port": "8888",
-      "api_whitelist": [],
-      "api_allowed_lan": []
+      "rpc_whitelist": [],
+      "rpc_allowed_lan": [],
+      "wallet_rpc_listen_ip": "127.0.0.1",
+      "miner_rpc_listen_ip": "127.0.0.1"
     }
   },
-  "log": {
-    "log_level": "info",
-    "disable_cprint": true
+  "chain": {
+    "data_dir": "~/.skt/chain",
+    "db_type": "leveldb"
   },
-  "miner": {
-    "master_sk": "71de4cbc2ee7a77c043234da615ad900d33b871d56a5dd5a627e7d3b14fd6938",
-    "harvester_addr" : [
-      "http://127.0.0.1:8000"
-    ],
-    "mining_addr": "sk1qqft78jcfy2j8pnts4nvzs6m4ptx2da5mcymrk3fuqh4qls3s0cxvq27957c",
-    "generate": false,
-    "allow_solo": true,
-    "enable_local_vdf": true,
-    "private_password": "12345678"
+  "farmer": {
+    "farmer_dir": "~/.skt/farmer",
+    "payout_addr": "",
+    "auto_start": false,
+    "start_local_harvester": true,
+    "enable_fake_plot": true,
+    "enable_local_pot": false,
+    "private_password": "123456"
+  },
+  "wallet": {
+    "wallet_dir": "~/.skt/wallet",
+    "autolock_seconds": 3600
+  },
+  "log": {
+    "log_dir": "~/.skt/logs",
+    "log_level": "info",
+    "disable_cprint": true,
+    "log_max_days": 180,
+    "log_max_backups": 10,
+    "log_max_size_mb": 100
   }
 }
+```
+
+example:
+
+```bash
+./skt-farmer -c ~/.skt/config.json
+```
+
+## 3. Start skt-harvester
+
+```bash
+usage: skt-harvester [-h] [-v] [-c CONFIG_PATH] [--auto-shutdown] [--fake] [--debug]
+
+harvester
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  -c CONFIG_PATH, --config CONFIG_PATH
+                        config file path path
+  --auto-shutdown       allowed to be auto-shutdown by farmer
+  --fake                running under fake plot mode
+  --debug
+```
+
+```harvester_config.json``` example:
+
+```json5
+{
+  "host": "127.0.0.1",
+  "log_backup_count": 3,
+  "log_dir": "/home/skt/.skt/logs",
+  "log_level": "warning",
+  "log_size_mb": 32,
+  "name": "LocalHarvester",
+  "plot_dirs": [],
+  "port": 16789,
+  "register_endpoint": "http://127.0.0.1:9888",
+  "service_ip": "127.0.0.1"
+}
+```
+
+example:
+
+```bash
+$ ./skt-harvester -c /home/skt/.skt/harvester/local_harvester_config.json
 ```
 
 # RPC endpoints
 
 ```
 {{wallet-url}} = 127.0.0.1:8888
-{{miner-url}} = 127.0.0.1:9688
+{{farmer-url}} = 127.0.0.1:9688
 ```
 
 ## Create wallet
@@ -201,12 +242,12 @@ curl -X POST 'http://{{wallet-url}}/v1/addresses/create' \
 }
 ```
 
-## Set miner payout address 
+## Set farmer payout address 
 
 - Request
 
 ```bash
-curl -X POST 'http://{{miner-url}}/v1/miner/config' \
+curl -X POST 'http://{{farmer-url}}/v1/farmer/config' \
 -H 'Content-Type: application/json' \
 --data-raw '{
     "payout_address":"sk1qql0pplvqn8z84333hle39fh227hkdl22a0s9vf0td0lwy57dnvuqqrrtq4c",
@@ -222,12 +263,12 @@ curl -X POST 'http://{{miner-url}}/v1/miner/config' \
 }
 ```
 
-## Start mining
+## Start farming
 
 - Request
 
 ```bash
-curl -X POST 'http://{{miner-url}}/v1/miner/start' 
+curl -X POST 'http://{{farmer-url}}/v1/farmer/start' 
 ```
 
 - Response
@@ -286,12 +327,12 @@ curl  -X POST 'http://{{wallet-url}}/v1/wallets/current/balance'
 }
 ```
 
-## Stop mining
+## Stop farming
 
 - Request
 
 ```bash
-curl -X POST 'http://{{miner-url}}/v1/miner/stop'
+curl -X POST 'http://{{farmer-url}}/v1/farmer/stop'
 ```
 
 - Response
