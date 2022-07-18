@@ -99,7 +99,7 @@ Help Options:
     "start_local_harvester": true,
     "enable_fake_plot": true,
     "enable_local_pot": false,
-    "private_password": "123456"
+    "private_password": "private password"
   },
   "wallet": {
     "wallet_dir": "~/.skt/wallet",
